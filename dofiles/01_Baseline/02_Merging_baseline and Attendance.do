@@ -9,7 +9,17 @@ import excel "$ATTENDANCE_TSTT_RAW_EXCEL_C1", sheet("Clean NRC Data") cellrange(
 save "$ATTENDANCE_RAW_TSTT_DTA_C1", replace
 */
 
+**Importing raw xlsx data
+*import excel "$ATTENDANCE_EXCEL_C1", sheet("Clean NRC Data") firstrow clear
+
+
+
+
 use "$ATTENDANCE_DTA_C1", clear
+*drop Tel1 
+*drop Tel2
+*drop Name 
+save "$ATTENDANCE_DTA_C1", replace
 
 
 rename RISEID id_number
@@ -19,7 +29,8 @@ drop if dup==1  // I just drop them for the moment
 drop dup
 
 *Drop variables with only missing data 
-dropmiss, force
+missings dropvars, force
+*dropmiss, force
 
 order DL, after (Notes)
 
@@ -113,7 +124,7 @@ rename Totaldaysattended attendance_days
 
 
 
-drop Name-SelectedforFLES Gender-VillageBlock
+drop SelectedforFLES Gender-VillageBlock
 drop if id_number==""
 
 gen cohort=1
@@ -131,7 +142,10 @@ save "$ATTENDANCE_DTA_C2", replace
 */
 
 use "$ATTENDANCE_DTA_C2", clear
-
+*drop Name 
+*drop Tel1 
+*drop Tel2
+save "$ATTENDANCE_DTA_C2", replace
 
 rename RISEID id_number
 
@@ -139,7 +153,8 @@ duplicates tag id_number, gen(dup)
 drop dup
 
 *Drop variables with only missing data 
-dropmiss, force
+missings dropvars, force
+*dropmiss, force
 
 drop Selected_FLES
 
@@ -205,7 +220,7 @@ label var completed_FLES "Completed FLES training"
 rename TradeEnrolled trade_enrolled
 label var trade_enrolled "Trade enrolled"
 
-drop Name-SelectedforFLES Gender-VillageBlock
+drop SelectedforFLES Gender-VillageBlock
 
 
 gen cohort=2
