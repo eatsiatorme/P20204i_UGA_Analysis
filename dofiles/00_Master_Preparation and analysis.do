@@ -80,7 +80,7 @@ global ATTENDANCE_RATES "$$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_
 
 *MIDLINE DATA
 global MIDLINE_RAW "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\02_Midline\C1\Youth\RISE_MIDLINE_1_NoPII.dta"
-global MIDLINE_merged "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\Midline_merged.dta"
+global MIDLINE_merged "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\MIDLINE_merged.dta"
 global MIDLINE_PREPARED "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\02_midline_prepared.dta"
 
 //Load maketable command programme 

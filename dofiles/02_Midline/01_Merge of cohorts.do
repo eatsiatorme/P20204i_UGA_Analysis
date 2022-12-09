@@ -24,4 +24,4 @@ foreach var of varlist `r(varlist)' {
 	rename `var' `var'_ml
 }
 
-save "$MIDLINE_Merged", replace
+save "$MIDLINE_merged", replace
