@@ -72,7 +72,7 @@ global ATTENDANCE_DTA_C2 "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_
 
 
 
-global ATTENDANCE_CLEAN "$$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\10_Attendance data_cleaned.dta"
+global ATTENDANCE_CLEAN "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\10_Attendance data_cleaned.dta"
 global BASELINE_DATA_COMPLETE "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Baseline_attendance_cleaned.dta"
 global DATA_PREPARED "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Baseline_prepared_for_analysis.dta"
 global ATTENDANCE_RATES "$$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Monitoring"
@@ -80,6 +80,7 @@ global ATTENDANCE_RATES "$$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_
 
 *MIDLINE DATA
 global MIDLINE_RAW "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\02_Midline\C1\Youth\RISE_MIDLINE_1_NoPII.dta"
+global MIDLINE_merged "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\Midline_merged.dta"
 global MIDLINE_PREPARED "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\02_midline_prepared.dta"
 
 //Load maketable command programme 
@@ -102,7 +103,11 @@ cd "$dofiles"
 							Midline data preparation 
 ********************************************************************************/
 
-do "02_Midline\01_Cleaning and preparation"
+***
+cd "$dofiles"
+do "02_Midline\01_Merge of cohorts.do"
+cd "$dofiles"
+do "02_Midline\02_Cleaning and preparation.do"
 
 
 /********************************************************************************
