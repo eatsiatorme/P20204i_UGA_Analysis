@@ -27,91 +27,91 @@ use "$MIDLINE_merged", clear
 ********************************************************************************/
 *Cleaning and labelling
 *Age at midline
-label var id2_ml "Age (based on midline questionnaire)"
-rename id2_ml age_qx_ml
+label var id2 "Age (based on midline questionnaire)"
+rename id2 age_qx
 
-encode age_ml, gen(age_num_ml)
-drop age_ml
-rename age_num_ml age_birth_ml
-label var age_birth_ml "Age (based on birth date)"  // some errors probably due to entry errors in year of birth
+encode age, gen(age_num)
+drop age
+rename age_num age_birth
+label var age_birth "Age (based on birth date)"  // some errors probably due to entry errors in year of birth
 
 
 
 *Gender
-label var id3_ml "Gender"
-rename id3_ml gender_ml
+label var id3 "Gender"
+rename id3 gender
 
 
 
 *Nationality
-rename a3_ml nationality_ml
-label var nationality_ml "Nationality"
+rename a3 nationality
+label var nationality "Nationality"
 
-gen nationality2_ml=.
-replace nationality2_ml=1 if nationality_ml==1
-replace nationality2_ml=2 if nationality_ml!=1 & !missing(nationality_ml)
-label define nation_lbl_ml 1"Ugandan" 2"Non Ugandan"
-label values nationality2_ml nation_lbl_ml
+gen nationality2=.
+replace nationality2=1 if nationality==1
+replace nationality2=2 if nationality!=1 & !missing(nationality)
+label define nation_lbl 1"Ugandan" 2"Non Ugandan"
+label values nationality2 nation_lbl
 
 *Residence
-rename a4_ml residence_ml
+rename a4 residence
 
 *Religion
-rename a5_ml religion_ml
-replace religion_ml=1 if religion_ml==-96
-label var religion_ml "Religion"
+rename a5 religion
+replace religion=1 if religion==-96
+label var religion "Religion"
 
 *Education
-rename a1a_ml educ_ml
-replace educ_ml=1 if educ_ml==-96
-label var educ_ml "Level of education at baseline"
+rename a1a educ
+replace educ=1 if educ==-96
+label var educ "Level of education at baseline"
 
-rename a1b_ml educ_post_ml
-replace educ_post_ml=1 if educ_ml==-96
-label var educ_post_ml "Level of education at midline" //will not use this varialbe for causal analysis
-order educ_post_ml, after(educ_ml)
+rename a1b educ_post
+replace educ_post=1 if educ==-96
+label var educ_post "Level of education at midline" //will not use this varialbe for causal analysis
+order educ_post, after(educ)
 
 
 *Marital status
-label var a2_ml "Marital status"
-rename a2_ml marital_status_ml
+label var a2 "Marital status"
+rename a2 marital_status
 
-gen marital_status2_ml=0
-replace marital_status2_ml=1 if marital_status_ml==1 | marital_status_ml==2
-replace marital_status2_ml=. if !missing(marital_status2_ml)
-label define marital2_lbl_ml 0"Not married" 1"Married"
-label values marital_status2_ml marital2_lbl_ml
-label var marital_status2_ml "Marital status"
-order marital_status2_ml, after(marital_status_ml)
+gen marital_status2=0
+replace marital_status2=1 if marital_status==1 | marital_status==2
+replace marital_status2=. if !missing(marital_status2)
+label define marital2_lbl 0"Not married" 1"Married"
+label values marital_status2 marital2_lbl
+label var marital_status2 "Marital status"
+order marital_status2, after(marital_status)
 
 
 *Members of household
-rename a14_ml nb_hh_ml
-label var nb_hh_ml "# of persons in household (including respondent)"
+rename a14 nb_hh
+label var nb_hh "# of persons in household (including respondent)"
 
-rename a9_ml nb_hh_inc_ml
-label var nb_hh_inc_ml "# of persons in household that depend on respondent's income"
-replace nb_hh_inc_ml="0" if nb_hh_inc_ml=="NONE"
-replace nb_hh_inc_ml="0" if nb_hh_inc_ml=="O"
-destring nb_hh_inc_ml, replace
+rename a9 nb_hh_inc
+label var nb_hh_inc "# of persons in household that depend on respondent's income"
+replace nb_hh_inc="0" if nb_hh_inc=="NONE"
+replace nb_hh_inc="0" if nb_hh_inc=="O"
+destring nb_hh_inc, replace
 
-rename a25_ml nb_hh_15_ml
-label var nb_hh_ml "# of persons in household above 15 years old"
+rename a25 nb_hh_15
+label var nb_hh "# of persons in household above 15 years old"
 
 *Household head
-rename a15_ml hh_head_ml
+rename a15 hh_head
 **# Bookmark #3
-label var hh_head_ml "Head of household" // Many missing obs!
+label var hh_head "Head of household" // Many missing obs!
 
 *relation to head of household
 **# Bookmark #4
-rename a16_ml hh_head_relation_ml 
-label var hh_head_relation_ml "Relation to head of household" // No obs!
+rename a16 hh_head_relation 
+label var hh_head_relation "Relation to head of household" // No obs!
 
 
 *Professional experience
-rename a10_ml pro_exp_ml
-label var pro_exp_ml "Has professional experience (worked in exhcange of cash or in-kind)"
+rename a10 pro_exp
+label var pro_exp "Has professional experience (worked in exhcange of cash or in-kind)"
 
 
 
@@ -122,47 +122,42 @@ label var pro_exp_ml "Has professional experience (worked in exhcange of cash or
 
 *JOB SEARCH
 
-gen search_emp1_ml=.
-replace search_emp1_ml=0 if d1_ml==0
-replace search_emp1_ml=1 if d1_ml==1 | d1_ml==2 | d1_ml==3
-label var search_emp1_ml "Searched for employment in last 4 weeks"
+gen search_emp1=.
+replace search_emp1=0 if d1==0
+replace search_emp1=1 if d1==1 | d1==2 | d1==3
+label var search_emp1 "Searched for employment in last 4 weeks"
+
+gen search_emp2=.
+replace search_emp2=0 if d1==0 | d1==2
+replace search_emp2=1 if d1==1 | d1==3
+label var search_emp2 "Searched for employment (non-self-employed) in last 4 weeks"
+
+gen search_emp3=.
+replace search_emp3=0 if d1==0 | d1==1
+replace search_emp3=1 if d1==2 | d1==3
+label var search_emp3 "Seeked to start a business in last 4 weeks"
+
 label define bin_lbl 0 "No" 1"Yes"
-label values search_emp1_ml bin_lbl
-
-gen search_emp2_ml=.
-replace search_emp2_ml=0 if d1_ml==0 | d1_ml==2
-replace search_emp2_ml=1 if d1_ml==1 | d1_ml==3
-label var search_emp2_ml "Searched for employment (non-self-employed) in last 4 weeks"
-
-label values search_emp2_ml bin_lbl
-
-
-gen search_emp3_ml=.
-replace search_emp3_ml=0 if d1_ml==0 | d1_ml==1
-replace search_emp3_ml=1 if d1_ml==2 | d1_ml==3
-label var search_emp3_ml "Seeked to start a business in last 4 weeks"
-
-label define bin_lbl_ml 0 "No" 1"Yes"
-label values search_emp3_ml bin_lbl
+label values search_emp? bin_lbl
 
 
 *How searched for a job (non-self-employed)
-foreach var of varlist  d3a_ml-d3e_ml{
+foreach var of varlist  d3a-d3e{
 clonevar `var'_clone=`var'
-replace `var'_clone=0 if d1_ml==0 | d1_ml==2
+replace `var'_clone=0 if d1==0 | d1==2
 }
 
-label var d3a_ml_clone "Read ads in newspapers/journals/magazines"
-label var d3b_ml_clone "Prepare/revise your CV"
-label var d3d_ml_clone "Talk to friends/relatives about possible job leads"
-label var d3e_ml_clone "Talk to previous employers/business acquaintances"
-label var d3f_ml_clone "Use Internet/radio/Social media"
+label var d3a_clone "Read ads in newspapers/journals/magazines"
+label var d3b_clone "Prepare/revise your CV"
+label var d3d_clone "Talk to friends/relatives about possible job leads"
+label var d3e_clone "Talk to previous employers/business acquaintances"
+label var d3f_clone "Use Internet/radio/Social media"
 
-rename d3a_ml_clone search_newspaper
-rename d3b_ml_clone search_prepcv
-rename d3d_ml_clone search_friends
-rename d3e_ml_clone search_employer
-rename d3f_ml_clone search_internet
+rename d3a_clone search_newspaper
+rename d3b_clone search_prepcv
+rename d3d_clone search_friends
+rename d3e_clone search_employer
+rename d3f_clone search_internet
 
 
 ********************************************************************************
@@ -174,9 +169,9 @@ rename d3f_ml_clone search_internet
 *** there is a non-missing repeat section after b1 is no, this should not happen
 
 * remove section for inconsistent b1 is the prefer
-foreach var of varlist  job_name_1_ml-b30_other_3_ml{
-cap replace `var'=. if b1_ml==0
-cap replace `var'="" if b1_ml==0
+foreach var of varlist  job_name_1-b30_other_3{
+cap replace `var'=. if b1==0
+cap replace `var'="" if b1==0
 }
 
 
@@ -218,25 +213,25 @@ employed
 
 
 *stable employment (excludes small jobs)
-clonevar stable_job_ml=b1_ml
-label var stable_job_ml "Has a stable job"
+clonevar stable_job=b1
+label var stable_job "Has a stable job"
 
 *# of stable jobs
-clonevar nb_stable_job_ml=b2_ml
-replace  nb_stable_job_ml=0 if stable_job_ml==0
-label var nb_stable_job_ml "Number of stable jobs"
+clonevar nb_stable_job=b2
+replace  nb_stable_job=0 if stable_job==0
+label var nb_stable_job "Number of stable jobs"
 
 *Has more than one stable job
-cap gen several_jobs_ml= .
-replace several_jobs_ml=0 if stable_job_ml==0
-replace several_jobs_ml=0 if stable_job_ml==1
-replace several_jobs_ml=1 if nb_stable_job_ml>1 & stable_job_ml==1 
-label var several_jobs_ml ">1 stable job"
+cap gen several_jobs= .
+replace several_jobs=0 if stable_job==0
+replace several_jobs=0 if stable_job==1
+replace several_jobs=1 if nb_stable_job>1 & stable_job==1 
+label var several_jobs ">1 stable job"
 
 
 * Employment (Based on ILO definition)
-gen employed_ml=emp_ilo_ml
-label var employed_ml "Has a job (last 7 days)"
+gen employed=emp_ilo
+label var employed "Has a job (last 7 days)"
 
 /*
 is considered as employed if respondent is:
@@ -262,69 +257,69 @@ b1a_7	None of the above
 * In stable jobs
 
 *Self-employed
-cap gen self_employed_ml= .
-replace self_employed_ml=0 if !missing(b1_ml) 
-replace self_employed_ml=1 if b6_1_ml==3 | b6_2_ml==3 | b6_3_ml==3
-label values self_employed_ml bin_lbl
-label var self_employed_ml "Self-employed in stable job"
+cap gen self_employed= .
+replace self_employed=0 if !missing(b1) 
+replace self_employed=1 if b6_1==3 | b6_2==3 | b6_3==3
+label values self_employed bin_lbl
+label var self_employed "Self-employed in stable job"
 
 *Employer
-cap drop employer_ml
-gen employer_ml= .
-replace employer_ml=0 if !missing(b1_ml) 
-replace employer_ml=1 if b6_1_ml==3 & b21_1_ml>0 | b6_2_ml==3 & b21_2_ml>0 | b6_3_ml==3 & b21_3_ml>0
-label values employer_ml bin_lbl
-label var employer_ml "Employer in stable job"
+cap drop employer
+gen employer= .
+replace employer=0 if !missing(b1) 
+replace employer=1 if b6_1==3 & b21_1>0 | b6_2==3 & b21_2>0 | b6_3==3 & b21_3>0
+label values employer bin_lbl
+label var employer "Employer in stable job"
 
 *Own account worker
-cap gen own_account_ml= .
-replace own_account_ml=0 if !missing(b1_ml) 
-replace own_account_ml=1 if employer_ml==0 & b21_1_ml==0 | employer_ml==0 & b21_2_ml==0 | employer_ml==0 & b21_3_ml==0
-label values own_account_ml bin_lbl
-label var own_account_ml "Own account in stable job"
+cap gen own_account= .
+replace own_account=0 if !missing(b1) 
+replace own_account=1 if employer==0 & b21_1==0 | employer==0 & b21_2==0 | employer==0 & b21_3==0
+label values own_account bin_lbl
+label var own_account "Own account in stable job"
 
 
 *Regular employee
-cap gen reg_employee_ml= .
-replace reg_employee_ml=0 if !missing(b1_ml) 
-replace reg_employee_ml=1 if b6_1_ml==1 | b6_2_ml==1 | b6_3_ml==1
-label values reg_employee_ml bin_lbl
-label var reg_employee_ml "Regular employee in stable job"
+cap gen reg_employee= .
+replace reg_employee=0 if !missing(b1) 
+replace reg_employee=1 if b6_1==1 | b6_2==1 | b6_3==1
+label values reg_employee bin_lbl
+label var reg_employee "Regular employee in stable job"
 
 *Regular family worker
-gen fam_work_ml= .
-replace fam_work_ml=0 if !missing(b1_ml) 
-replace fam_work_ml=1 if b6_1_ml==2 | b6_2_ml==2 | b6_3_ml==2
-label values fam_work_ml bin_lbl
-label var fam_work_ml "Regular family worker in stable job"
+gen fam_work= .
+replace fam_work=0 if !missing(b1) 
+replace fam_work=1 if b6_1==2 | b6_2==2 | b6_3==2
+label values fam_work bin_lbl
+label var fam_work "Regular family worker in stable job"
 
 *apprentice (includes volunteers and interns)
-gen apprentice_ml= .
-replace apprentice_ml=0 if !missing(b1_ml) 
-replace apprentice_ml=1 if (b6_1_ml==4 | b6_2_ml==4 | b6_3_ml==4) | (b6_1_ml==6 | b6_2_ml==6 | b6_3_ml==6)
-label values apprentice_ml bin_lbl
-label var apprentice_ml "Apprentice in stable job"
+gen apprentice= .
+replace apprentice=0 if !missing(b1) 
+replace apprentice=1 if (b6_1==4 | b6_2==4 | b6_3==4) | (b6_1==6 | b6_2==6 | b6_3==6)
+label values apprentice bin_lbl
+label var apprentice "Apprentice in stable job"
 
 *Casual worker
-gen casual_worker_ml= .
-replace casual_worker_ml=0 if !missing(b1_ml) 
-replace casual_worker_ml=1 if b6_1_ml==5 | b6_2_ml==5 | b6_3_ml==5
-label values casual_worker_ml bin_lbl
-label var casual_worker_ml "Casual worker in stable job"
+gen casual_worker= .
+replace casual_worker=0 if !missing(b1) 
+replace casual_worker=1 if b6_1==5 | b6_2==5 | b6_3==5
+label values casual_worker bin_lbl
+label var casual_worker "Casual worker in stable job"
 
 *Other type of worker
-gen other_worker_ml= .
-replace other_worker_ml=0 if !missing(b1_ml) 
-replace other_worker_ml=1 if self_employed_ml==0 & reg_employee_ml==0 & fam_work_ml==0 & apprentice_ml==0 & casual_worker_ml==0  & stable_job_ml==1
-label values other_worker_ml bin_lbl
-label var other_worker_ml "Other employment in stable job"
+gen other_worker= .
+replace other_worker=0 if !missing(b1) 
+replace other_worker=1 if self_employed==0 & reg_employee==0 & fam_work==0 & apprentice==0 & casual_worker==0  & stable_job==1
+label values other_worker bin_lbl
+label var other_worker "Other employment in stable job"
 
 *Other type of worker
-gen other_emp_self_ml= .
-replace other_emp_self_ml=0 if !missing(b1_ml) 
-replace other_emp_self_ml=1 if fam_work_ml==1 | apprentice_ml==1 |casual_worker_ml==1
-label values other_emp_self_ml bin_lbl
-label var other_emp_self_ml "Other employment status"
+gen other_emp_self= .
+replace other_emp_self=0 if !missing(b1) 
+replace other_emp_self=1 if fam_work==1 | apprentice==1 |casual_worker==1
+label values other_emp_self bin_lbl
+label var other_emp_self "Other employment status"
 
 }
 
@@ -336,12 +331,12 @@ label var other_emp_self_ml "Other employment status"
 
 *Vulnerable employment:
 
-cap gen vul_emp_ml= .
-replace vul_emp_ml=0 if !missing(b1_ml)
-replace vul_emp_ml=1 if own_account_ml==1 | fam_work_ml==1
-replace vul_emp_ml=0 if employer_ml==1 | reg_employee_ml==1 | apprentice_ml==1 | casual_worker_ml | other_worker_ml // we insert this line after as if at least job is considered "non vulenrable, the obs is considered "non-vulnerable".
-replace vul_emp_ml= . if b21_1_ml==-98 & (b21_2_ml==-98 | b21_2_ml==.) & (b21_3_ml==-98 | b21_3_ml==.) //We do not know if these self-employed employ someone
-label var vul_emp_ml "Vulnerable employment in stable job"
+cap gen vul_emp= .
+replace vul_emp=0 if !missing(b1)
+replace vul_emp=1 if own_account==1 | fam_work==1
+replace vul_emp=0 if employer==1 | reg_employee==1 | apprentice==1 | casual_worker | other_worker // we insert this line after as if at least job is considered "non vulenrable, the obs is considered "non-vulnerable".
+replace vul_emp= . if b21_1==-98 & (b21_2==-98 | b21_2==.) & (b21_3==-98 | b21_3==.) //We do not know if these self-employed employ someone
+label var vul_emp "Vulnerable employment in stable job"
 
 }
 
@@ -374,51 +369,51 @@ label var vul_emp_ml "Vulnerable employment in stable job"
 foreach i of num 1/3{
     
 *** no default
-cap drop informal_sect_`i'a_ml
-gen informal_sect_`i'a_ml= .
-label var informal_sect_`i'a_ml "Job `i' is in the informal sector [no default]"
+cap drop informal_sect_`i'a
+gen informal_sect_`i'a= .
+label var informal_sect_`i'a "Job `i' is in the informal sector [no default]"
 
 // Identify jobs in in/formal sector based on registration
-cap replace informal_sect_`i'a_ml=0 if b12_1_`1'_ml==1 & !missing(b3_`i'_ml)  //What does b3_i mean?
-cap replace informal_sect_`i'a_ml=0 if b20_1_`1'_ml==1 & !missing(b3_`i'_ml)
+cap replace informal_sect_`i'a=0 if b12_1==1 & !missing(b3_`i')  //What does b3_i mean?
+cap replace informal_sect_`i'a=0 if b20_1==1 & !missing(b3_`i')
 
 // Identify jobs in in/formal sector based on number of workers
-replace informal_sect_`i'a_ml=0 if b6_`i'_ml==3 & b21_`i'_ml>=4 & !missing(b21_`i'_ml) & missing(informal_sect_`i'a_ml) & !missing(b3_`i'_ml) // before it was set to informal for <4 and default was missing. But comment said default is informal, this does not change. This way we incorporate number of workers in the definition of formality, maybe threshold should change. 4 workers because with the respondent, number of workers=5
+replace informal_sect_`i'a=0 if b6_`i'==3 & b21_`i'>=4 & !missing(b21_`i') & missing(informal_sect_`i'a) & !missing(b3_`i') // before it was set to informal for <4 and default was missing. But comment said default is informal, this does not change. This way we incorporate number of workers in the definition of formality, maybe threshold should change. 4 workers because with the respondent, number of workers=5
 
-replace informal_sect_`i'a_ml=1 if b6_`i'_ml==3 & b21_`i'_ml<4 & !missing(b21_`i'_ml)  & missing(informal_sect_`i'a_ml) & !missing(b3_`i'_ml) //  4 workers because with the respondent, number of workers=5
+replace informal_sect_`i'a=1 if b6_`i'==3 & b21_`i'<4 & !missing(b21_`i')  & missing(informal_sect_`i'a) & !missing(b3_`i') //  4 workers because with the respondent, number of workers=5
 
 // weaker info
 
-cap replace informal_sect_`i'a_ml=1 if b20_`i'_ml==1 & missing(informal_sect_`i'a_ml) & !missing(b3_`i'_ml)
+cap replace informal_sect_`i'a=1 if b20_`i'==1 & missing(informal_sect_`i'a) & !missing(b3_`i')
 
 **# Bookmark #2: What does .c and -b mean again?			 if .c=informal_sect_1==1 if .b=.
-cap replace informal_sect_`i'a_ml=1 if b12_`i'_ml==.c & missing(informal_sect_`i'a_ml) & !missing(b3_`i'_ml) // if you don't know if you're registered you are likely not
+cap replace informal_sect_`i'a=1 if b12_`i'==.c & missing(informal_sect_`i'a) & !missing(b3_`i') // if you don't know if you're registered you are likely not
 
 
 *** informal default
-cap drop informal_sect_`i'b_ml
-clonevar informal_sect_`i'b_ml= informal_sect_`i'a_ml
-label var informal_sect_`i'b_ml "Job `i' is in the informal sector [informal default]"
+cap drop informal_sect_`i'b
+clonevar informal_sect_`i'b= informal_sect_`i'a
+label var informal_sect_`i'b "Job `i' is in the informal sector [informal default]"
 
 //By default set as formal when has a job
-replace informal_sect_`i'b_ml=1 if !missing(b3_`i'_ml) & missing(informal_sect_`i'b_ml)
+replace informal_sect_`i'b=1 if !missing(b3_`i') & missing(informal_sect_`i'b)
 
 *** formal default
-cap drop informal_sect_`i'c_ml
-clonevar informal_sect_`i'c_ml= informal_sect_`i'a_ml
-label var informal_sect_`i'c_ml "Job `i' is in the informal sector [formal default]"
+cap drop informal_sect_`i'c
+clonevar informal_sect_`i'c= informal_sect_`i'a
+label var informal_sect_`i'c "Job `i' is in the informal sector [formal default]"
 
 //By default set as formal when has a job
-replace informal_sect_`i'c_ml=0 if !missing(b3_`i'_ml) & missing(informal_sect_`i'c_ml)
+replace informal_sect_`i'c=0 if !missing(b3_`i') & missing(informal_sect_`i'c)
 
 }
 
 *Any formal sector
-cap drop formal_sect_ml
-gen formal_sect_ml= .
-replace formal_sect_ml=0 if !missing(b1_ml)
-replace formal_sect_ml=1 if informal_sect_1a_ml==0 | informal_sect_2a_ml==0 | informal_sect_3a_ml==0
-label var formal_sect_ml "Has a stable job in the formal sector"
+cap drop formal_sect
+gen formal_sect= .
+replace formal_sect=0 if !missing(b1)
+replace formal_sect=1 if informal_sect_1a==0 | informal_sect_2a==0 | informal_sect_3a==0
+label var formal_sect "Has a stable job in the formal sector"
 
 
 *** INFORMAL EMPLOYMENT
@@ -427,46 +422,106 @@ label var formal_sect_ml "Has a stable job in the formal sector"
 
 *informal employment by job
 foreach i of num 1/3{
-cap drop informal_employ_`i'_ml
-gen informal_employ_`i'_ml= .
+cap drop informal_employ_`i'
+gen informal_employ_`i'= .
 
 * self employed
-replace informal_employ_`i'_ml=1 if b6_`i'_ml==3 & informal_sect_`i'a_ml==1
-replace informal_employ_`i'_ml=0 if b6_`i'_ml==3 & informal_sect_`i'a_ml==0 
+replace informal_employ_`i'=1 if b6_`i'==3 & informal_sect_`i'a==1
+replace informal_employ_`i'=0 if b6_`i'==3 & informal_sect_`i'a==0 
 
 * not self employed
-replace informal_employ_`i'_ml=1 if b6_`i'_ml!=3 & b13_`i'_ml==0 | b13_`i'_ml==2 // informal if no or oral contract
-replace informal_employ_`i'_ml=0 if b6_`i'_ml!=3 & b13_`i'_ml==1 & informal_sect_`i'c_ml==0 // note I use default formal for firm, as written contract already a burden
+replace informal_employ_`i'=1 if b6_`i'!=3 & b13_`i'==0 | b13_`i'==2 // informal if no or oral contract
+replace informal_employ_`i'=0 if b6_`i'!=3 & b13_`i'==1 & informal_sect_`i'c==0 // note I use default formal for firm, as written contract already a burden
 
 * if no contract info then base on sector
-replace informal_employ_`i'_ml=1 if b6_`i'_ml!=3 & missing(informal_employ_`i'_ml) & informal_sect_`i'a_ml==1  //if in informal sector and no info on contract, then assume he is in informal employment
+replace informal_employ_`i'=1 if b6_`i'!=3 & missing(informal_employ_`i') & informal_sect_`i'a==1  //if in informal sector and no info on contract, then assume he is in informal employment
 * replace informal_employ_`i'=0 if b6_`i'!=3 & missing(informal_employ_`i') & informal_sect_`i'a==0 //if in formal sector and no info on contract, then assume he is in formal employment  --> I cancelled out this option as the assumption doesn't seem realistic to me. This said, for Tthis sample, it does not provoke any change.
 
 
 * default informal 
-replace informal_employ_`i'_ml=1 if !missing(b6_`i'_ml) & missing(informal_employ_`i'_ml)
-label var informal_employ_`i'_ml "Job `i' is informal employment"
+replace informal_employ_`i'=1 if !missing(b6_`i') & missing(informal_employ_`i')
+label var informal_employ_`i' "Job `i' is informal employment"
 }
 
 
 *Formal employment
-cap drop formal_employ_ml
-gen formal_employ_ml= .
-replace formal_employ_ml=0 if !missing(b1_ml)
-replace formal_employ_ml=1 if informal_employ_1_ml==0 | informal_employ_2_ml==0 | informal_employ_3_ml==0
-label var formal_employ_ml "Has a formal stable job"
+cap drop formal_employ
+gen formal_employ= .
+replace formal_employ=0 if !missing(b1)
+replace formal_employ=1 if informal_employ_1==0 | informal_employ_2==0 | informal_employ_3==0
+label var formal_employ "Has a formal stable job"
 }
 
 //Wrap up:
 *order variables created
-order self_employed_ml reg_employee_ml fam_work_ml apprentice_ml casual_worker_ml other_worker_ml informal_sect_1?_ml informal_sect_2?_ml informal_sect_3?_ml formal_sect_ml informal_employ_1_ml informal_employ_2_ml informal_employ_3_ml formal_employ_ml,  after (nb_stable_job_ml)
+order self_employed reg_employee fam_work apprentice casual_worker other_worker informal_sect_1? informal_sect_2? informal_sect_3? formal_sect informal_employ_1 informal_employ_2 informal_employ_3 formal_employ,  after (nb_stable_job)
 
+
+
+*RISE Participation
+cap drop rise_attend
+gen rise_attend = .
+replace rise_attend = 1 if rise_institute== 1 | rise_course ==1
+replace rise_attend = 0 if rise_part ==.
+label var rise_attend "Attended RISE TSTT trainings"
+cap label define rise_attend_lbl 0 "Did not Attend in RISE TSTT" 1 "Attended RISE TSTT"
+label val rise_attend rise_attend_lbl
+
+cap drop fles_attend //Refers only to trainees who completed the tstt trainings and took part in the fles training.
+gen fles_attend =. 
+replace fles_attend = 1 if rise_check_fles == 1
+replace fles_attend =0 if rise_check_fles == 0
+label var fles_attend "Attended RISE FLES trainings"
+cap label define fles_attend_lbl 0 "Did not attend FLES training" 1 "Attended RISE FLES training"
+label val fles_attend fles_attend_lbl
+
+
+*training quality
+cap drop tf_teacher_qual
+egen tf_teacher_qual=rowmean(k1 k2 k4)
+replace tf_teacher_qual=. if missing(k1) | missing(k2) | missing(k4)
+
+label var tf_teacher_qual "Quality of teaching at RISE TSTT training (1=very bad; 5=excellent)"
+
+
+cap drop tf_centre_qual
+gen tf_centre_qual=k5
+
+label var tf_centre_qual "Quality of RISE VTIs Centres (1=very bad; 5=excellent)"
+
+
+cap drop tf_skills_qual
+egen tf_skills_qual=rowmean(k6 k8 k9 k10)
+replace tf_skills_qual=. if missing(k6) | missing(k8) | missing(k9)  | missing(k10)
+label var tf_skills_qual "RISE TSTT trainings develop skills (1=very bad; 5=excellent)"
+
+
+cap drop fles_complement
+clonevar fles_complement = k15
+label var fles_complement "Complementarity of FLES with TSTT trainings" 
+
+cap drop fles_teacher_qual
+egen fles_teacher_qual = rowmean(k16 k17)
+replace fles_teacher_qual =. if missing(k17) | missing(k16)
+label var fles_teacher_qual "RISE FLES trainings provide business skills"
+
+
+
+
+
+
+ 
 
 ********************************************************************************
 save "$MIDLINE_PREPARED", replace
 
-/*
-*Add  suffix to all variables
-rename * *
+
+*Add  suffix to all variables (Except for applicant id and treatment variables)
+ds ApplicantID treatment, not
+foreach var of varlist `r(varlist)' {
+	rename `var' `var'_ml
+}
+
+
 
 save "$MIDLINE_PREPARED", replace
