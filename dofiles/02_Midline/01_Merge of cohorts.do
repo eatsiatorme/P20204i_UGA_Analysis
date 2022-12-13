@@ -18,10 +18,4 @@ label val cycle L_cycle
 ********************************************************************************
 
 
-*Add  suffix to all variables
-ds ApplicantID treatment, not
-foreach var of varlist `r(varlist)' {
-	rename `var' `var'_ml
-}
-
 save "$MIDLINE_merged", replace
