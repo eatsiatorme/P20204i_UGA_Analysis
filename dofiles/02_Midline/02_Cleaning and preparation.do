@@ -457,12 +457,479 @@ label var formal_employ "Has a formal stable job"
 order self_employed reg_employee fam_work apprentice casual_worker other_worker informal_sect_1? informal_sect_2? informal_sect_3? formal_sect informal_employ_1 informal_employ_2 informal_employ_3 formal_employ,  after (nb_stable_job)
 
 
+********************************************************************************
+* Employment Sector								   
+
+{ // simplified ISIC1
+
+*mapping job_category to isic_1_*
+
+/*
+
+ISIC_1	1	Agriculture, forestry and fishing
+ISIC_1	2	Mining and quarrying
+ISIC_1	3	Manufacturing
+ISIC_1	4	Electricity, gas, steam and air conditioning supply
+ISIC_1	5	Water supply; sewerage, waste management and remediation activities
+ISIC_1	6	Construction
+ISIC_1	7	Wholesale and retail trade; repair of motor vehicles and motorcycles
+ISIC_1	8	Transportation and storage
+ISIC_1	9	Accommodation and food service activities
+ISIC_1	10	Information and communication
+ISIC_1	11	Financial and insurance activities
+ISIC_1	12	Real estate activities
+ISIC_1	13	Professional, scientific and technical activities
+ISIC_1	14	Administrative and support service activities
+ISIC_1	15	Public administration and defence; compulsory social security
+ISIC_1	16	Education
+ISIC_1	17	Human health and social work activities
+ISIC_1	18	Arts, entertainment and recreation
+ISIC_1	19	Other service activities
+ISIC_1	20	Activities of households as employers; undifferentiated goods- and services-producing activities of households for own use
+ISIC_1	21	Activities of extraterritorial organizations and bodies
+
+job_cat	1	Building & congrete practices - tiling and land scaping 6
+job_cat	2	Tailoring & garment cutting - Tailoring machine repair 3
+job_cat	3	Solar installation, repair & maintenance 4
+job_cat	4	Plumbing - Repair of boreholes 5
+job_cat	5	Knitting & weaving 3
+job_cat	6	Welding & metal fabrication 3
+job_cat	7	Electrical installation 4
+job_cat	8	Caterigng & hotel management 9
+job_cat	9	Motorcycle repair 7
+job_cat	10	ICT-Graphic design & branding 18
+job_cat	11	Mechanics of small scale & indutrial machines 3
+job_cat	12	Carpentary & joinery 2
+
+
+
+*/
+
+
+foreach i of num 1/3{
+cap replace isic_1_`i'=6 if (job_category_`i'==1)
+cap replace isic_1_`i'=7 if (job_category_`i'==9) 
+cap replace isic_1_`i'=5 if (job_category_`i'==4)
+*cap replace isic_1_`i'_ml=1 if (job_category_`i'_ml==8)   & (cycle==2 | cycle==3)
+cap replace isic_1_`i'=3 if (job_category_`i'==5 | job_category_`i'==6 | job_category_`i'==11)
+cap replace isic_1_`i'=4 if (job_category_`i'==7 | job_category_`i'==3) 
+cap replace isic_1_`i'=18 if (job_category_`i'==10) 
+cap replace isic_1_`i'=2 if (job_category_`i'==12) 
+
+}
+
+
+
+**generate dummies
+
+cap drop isic_simple*
+clonevar isic_simple=isic_1_1
+
+label define isic1_lbl 888 "Other" 999 "No applicable/missing", modify
+
+replace isic_simple=888 if !missing(isic_1_1) & !(isic_1_1==3 | isic_1_1==4 | isic_1_1==6 | isic_1_1==7 )
+
+* make wholesale and retail and motor repair into retail and other
+
+label define isic1_lbl 7 "Retail trade", modify
+
+*replace isic_simple=888 if !missing(isic_1_1_ml) & isic_1_1_ml==7 & isic_2_1_ml!=747
+
+replace isic_simple=999 if !missing(b1) & missing(isic_1_1)
+
+tab isic_simple
+
+tabulate isic_simple, generate(isic_simple) 
+*labvarch isic_simple*, after(==)
+
+rename isic_simple? isic_simple?
+rename isic_simple isic_simple
+
+*Division by 3 main economic sectors
+foreach i of num 1/3 {
+cap drop  sect_`i'
+cap gen sect_`i'=.
+replace sect_`i'=1 if isic_1_`i'<=2 & !missing(b3_`i')
+replace sect_`i'=2 if isic_1_`i'>=3 & isic_1_`i'<=6 & !missing(b3_`i')
+replace sect_`i'=3 if isic_1_`i'>=7 & !missing(b3_`i')
+
+cap label define sect_lbl 1"Primary (extraction of raw materials)" 2"Secondary (Manufacturing)" 3"Services"
+label values sect_`i' sect_lbl
+label var sect_`i' "Sector of employment of job `i'"
+}
+
+
+}
+
+
+
+********************************************************************************
+*             	                 INCOME						   			      *			
+********************************************************************************
+{ // income
+/*
+List of indicators created/relevant
+
+*INCOME OVER LAST 6 MONTHS
+	**Average monthly income over last 6 months:
+		avg_inc_all_last6_ml
+
+	**Average monthly income from self-employment over last 6 months:
+		avg_inc_se_last6_ml
+
+	**Average monthly income from employment over last 6 months:
+		avg_inc_emp_last6_ml
+
+	**Average monthly income from employment over last 6 months excluding inkind payments:
+		avg_inc_emp2_last6_ml
+
+*INCOME FROM CURRENT JOB
+	*Monthly income from current jobs
+		inc_all_current_ml
+
+	*Monthly income from current self-employment
+		inc_se_current_ml 
+
+	*Monthly income from current employment:
+		inc_emp_current_ml
+
+	*Monthly income from current employment excluding inkind payments:
+		inc_emp2_current_ml
+
+*INCOME FROM MOST RECENT JOB
+	**Average monthly income of most recent job:
+		inc_most_recent_ml
+
+*PRODUCTIVITY: Hourly income
+	* Average hourly income from job 1:
+		hourly_income_1_ml
+		hourly_income_2_ml
+		hourly_income_3_ml
+	*Average hourly income over last 6 months
+		hourly_income_last6_ml
+		
+	*Hourly income from current jobs
+		hourly_income_current_ml
+*/
+
+
+{ //  need to put into cleaning
+
+foreach var of varlist c2 c1_normal c4 b17_? b18_? b26_?{
+	replace `var'=.b if `var'==98  | `var'==-98 // forgot - in front of missing value code
+	replace `var'=.a if `var'==99 | `var'==-99 // forgot - in front of missing value code
+
+}
+
+* make number of months of contract to numerical var (to be put into cleaning)
+destring b17_unit_s_1 b18_unit_s_1 b26_unit_s_1 b26_unit_s_2, replace
+
+foreach var in b17_unit_s_1 b18_unit_s_1 b26_unit_s_1 b26_unit_s_2{
+	replace `var'=1 if `var'==0 // round up to at least 1 month
+}
+
+replace c1=0 if (c2==0 & c4==0) | (c2==6800 & c4==680) // no income variation, should be missing
+
+
+}
+
+
+{ // monthly income indicators
+
+/*
+create monthly income per job in last x months
+
+create monthly income over all non self-employment jobs over last x months
+
+create monthly income over all self employment jobs over last x months
+
+create monthly income over all current jobs
+
+create monthly income most recent job
+
+create hourly productivity 
+
+
+notes/limitations: 
+
+includes only activities for which the person was employed for at least 1 month; 
+
+time worked is with precision of calendar month, i.e., if someone worked from mid-january in a job, income is calculated as if they worked whole january.
+
+missing values could be more properly handled. i.e. if income is missing for one job, then total income is also somewhat missing, but here it is calculated treating missings as 0.
+
+hours often very high. 50% reportedly work more than 45 hours/week in first job; this (among) other things makes hourly income quite low
+
+*/
+
+
+{ // income in reference periods, e.g. last 6 months (6 months is maximum based on tool)
+
+local ref_periods 6 // any integer between 1 and 6
+
+foreach r in `ref_periods'{
+    
+* generate reference period date
+* precision is months, rounded to full calender months
+
+cap drop ref_start
+gen ref_start=current_month_dt-365/12*(`r'-1)
+format ref_start %td
+
+foreach i of num 1/3 {
+
+*generate start date of job relevant to reference period, i.e. if before reference period started, then replace with reference period start
+cap drop start_job_`i'
+clonevar start_job_`i'=b4_`i' if b5_`i'>=ref_start & !missing(b3_`i')
+replace start_job_`i'=ref_start if b4_`i'<=ref_start & b5_`i'>=ref_start & !missing(b3_`i')
+
+* generate end date, replace with current date if ongoing
+cap drop end_job_`i'
+clonevar end_job_`i'=b5_`i' if b5_`i'>=ref_start & !missing(b3_`i')
+replace end_job_`i'=current_month_dt if b3_`i'==1
+
+* time in months on job during reference period, i.e., number of calendar months(!) in job
+cap drop job_time_in_ref_`i'
+gen job_time_in_ref_`i'=.
+replace job_time_in_ref_`i'=0 if !missing(b3_`i')
+replace job_time_in_ref_`i'=round((end_job_`i'-start_job_`i')/365*12+1)
+replace job_time_in_ref_`i'=0 if b5_`i'<ref_start  // important if job falls outside of reference period
+
+* hours worked per month in job for "non-self-employed"
+cap drop monthly_hours_job_`i'
+gen monthly_hours_job_`i'=.
+replace monthly_hours_job_`i'=b16_`i'*b15_`i'*4.345 if b6_`i'!=3
+
+* hours worked per month in job for self-employed
+replace monthly_hours_job_`i'=b22_`i'*b23_`i'*4.345 if b6_`i'==3 & !missing(b6_`i') // We assume that time of oppening of the business=time worked by the owner. Once endline data is available, it will be important to check how many self-employed share ownership to assess whether this assumptions holds.
+
+
+
+cap drop total_hours_job_`i'
+gen total_hours_job_`i'=monthly_hours_job_`i'*job_time_in_ref_`i'
+
+* generate cash income from employment
+cap drop monthly_cash_job_`i'
+gen monthly_cash_job_`i'=.
+//replace monthly_cash_job_`i'=0 //if !missing(b3_`i'_ml)
+replace monthly_cash_job_`i'=b17_`i' //if !missing(b18_`i'_ml)
+replace monthly_cash_job_`i'=monthly_cash_job_`i'*4.345 if b17_unit_`i'==2 
+replace monthly_cash_job_`i'=monthly_cash_job_`i'*4.345*b16_`i' if b17_unit_`i'==3
+replace monthly_cash_job_`i'=monthly_cash_job_`i'/b17_unit_s_`i' if b17_unit_`i'==4 
+*replace monthly_cash_job_`i'=. if b17_`i'_ml==-97 | b17_`i'_ml==-96// if answer cannot be used for calculation
+
+
+* generate inkind income from employment
+destring b18_unit_s_2, replace
+destring b18_unit_s_3, replace
+cap drop monthly_inkind_job_`i'
+gen monthly_inkind_job_`i'=.
+//replace monthly_inkind_job_`i'=0 if !missing(b3_`i'_ml)
+replace monthly_inkind_job_`i'=b18_`i' //if !missing(b18_`i'_ml)
+*replace monthly_inkind_job_`i'=. if b18_`i'_ml==-97 | b18_`i'_ml==-96// if answer cannot be used for calculation
+replace monthly_inkind_job_`i'=monthly_inkind_job_`i'*4.345  if b18_unit_`i'==2
+replace monthly_inkind_job_`i'=monthly_inkind_job_`i'*4.345 *b16_`i'  if b18_unit_`i'==3
+replace monthly_inkind_job_`i'=monthly_inkind_job_`i'/b18_unit_s_`i' if b18_unit_`i'==4 
+
+*generate monthly profits from self-employment
+cap drop monthly_profit_job_`i'
+gen monthly_profit_job_`i'=.
+//replace monthly_profit_job_`i'=0 if !missing(b3_`i'_ml)
+replace monthly_profit_job_`i'=b26_`i' // if !missing(b26_`i'_ml)
+*replace monthly_profit_job_`i'=. if b26_`i'_ml==-97 | b26_`i'_ml==-96// if answer cannot be used for calculation
+replace monthly_profit_job_`i'=monthly_profit_job_`i'*4.345  if b26_unit_`i'==2
+replace monthly_profit_job_`i'=monthly_profit_job_`i'*4.345 *b16_`i' if b26_unit_`i'==3
+replace monthly_profit_job_`i'=monthly_profit_job_`i'/b26_unit_s_`i' if b26_unit_`i'==4 
+
+* generate total monthly income of job (for later, not reference period)
+cap drop total_monthly_`i'
+egen total_monthly_`i'=rowtotal(monthly_cash_job_`i' monthly_inkind_job_`i' monthly_profit_job_`i') , missing
+
+* calculate total income by type from job during whole reference period (assuming working full calendar months)
+cap drop total_cash_job_`i'
+gen total_cash_job_`i'=monthly_cash_job_`i'*job_time_in_ref_`i'
+
+cap drop total_inkind_job_`i'
+gen total_inkind_job_`i'=monthly_inkind_job_`i'*job_time_in_ref_`i'
+
+cap drop total_profit_job_`i'
+gen total_profit_job_`i'=monthly_profit_job_`i'*job_time_in_ref_`i'
+
+
+* hourly incomevars
+cap drop hourly_income_`i'
+gen hourly_income_`i'=.
+replace hourly_income_`i'=total_monthly_`i'/monthly_hours_job_`i'
+label var hourly_income_`i' "Average hourly income from `i'. job"
+replace hourly_income_`i'=. if b17_`i'==-97 | b17_`i'==-96 |b18_`i'==-97 | b18_`i'==-96 //| b26_`i'_ml==-97 | b26_`i'_ml==-96 | // if answer cannot be used for calculation
+
+}
+
+* calculate total income by type during reference period
+cap drop total_income_last`r'mo
+egen total_income_last`r'mo=rowtotal(total_cash_job_? total_inkind_job_? total_profit_job_?)
+replace total_income_last`r'mo=. if missing(b1)
+replace total_income_last`r'mo=0 if b1==0
+
+
+cap drop total_cash_last`r'mo
+egen total_cash_last`r'mo=rowtotal(total_cash_job_?)
+replace total_cash_last`r'mo=. if missing(b1)
+replace total_cash_last`r'mo=0 if b1==0
+
+
+cap drop total_inkind_last`r'mo
+egen total_inkind_last`r'mo=rowtotal(total_inkind_job_?)
+replace total_inkind_last`r'mo=. if missing(b1)
+replace total_inkind_last`r'mo=0 if b1==0
+
+
+cap drop total_profit_last`r'mo
+egen total_profit_last`r'mo=rowtotal(total_profit_job_?)
+replace total_profit_last`r'mo=. if missing(b1)
+replace total_profit_last`r'mo=0 if b1==0
+
+
+* calculate average monthly income by type during reference period
+
+cap drop avg_inc_all_last`r'
+gen avg_inc_all_last`r'=(total_cash_last`r'mo+total_inkind_last`r'mo+total_profit_last`r'mo)/`r'
+
+label var avg_inc_all_last`r' "Average monthly income over last `r' months"
+
+cap drop avg_inc_se_last`r'
+gen avg_inc_se_last`r'=total_profit_last`r'mo/`r'
+
+label var avg_inc_se_last`r' "Average monthly income from self-employment over last `r' months"
+
+cap drop avg_inc_emp_last`r'
+gen avg_inc_emp_last`r'=(total_cash_last`r'mo+total_inkind_last`r'mo)/`r'
+
+label var avg_inc_emp_last`r' "Average monthly income from employment over last `r' months"
+
+cap drop avg_inc_emp2_last`r'
+gen avg_inc_emp2_last`r'=(total_cash_last`r'mo)/`r'
+
+label var avg_inc_emp2_last`r' "Average monthly income from employment over last `r' months excl. inkind"
+
+
+* calculate hourly_income overall last r months
+cap drop total_hours_last`r'mo
+egen total_hours_last`r'mo=rowtotal(total_hours_job_?)
+replace total_hours_last`r'mo=. if missing(b1)
+foreach i in 1 2 3{
+replace total_hours_last`r'mo=. if missing(monthly_hours_job_`i') & !missing(total_monthly_`i')
+*replace total_income_last`r'mo=. if b26_`i'_ml==-97 | b26_`i'_ml==-96 | b17_`i'_ml==-97 | b17_`i'_ml==-96 |b18_`i'_ml==-97 | b18_`i'_ml==-96 // if income information not disclosed by respondent 
+}
+
+
+cap drop hourly_income_last`r'
+gen hourly_income_last`r'=total_income_last`r'/total_hours_last`r'
+
+label var hourly_income_last`r' "Average hourly income over last `r' months"
+}
+
+}
+
+
+*Months in employment during the last 6 months --> variable to place in employment section
+cap drop job_time
+gen job_time=job_time_in_ref_1
+replace job_time= job_time_in_ref_2 if job_time_in_ref_2<job_time
+replace job_time= job_time_in_ref_2 if job_time_in_ref_3<job_time
+label var job_time "Months in employment in the last 6 months"
+
+
+{ // income in current jobs
+
+cap drop inc_all_current
+gen inc_all_current=.
+replace inc_all_current=0 
+
+cap drop inc_se_current
+gen inc_se_current=.
+replace inc_se_current=0 
+
+cap drop inc_emp_current
+gen inc_emp_current=.
+replace inc_emp_current=0
+
+cap drop inc_emp2_current
+gen inc_emp2_current=.
+replace inc_emp2_current=0 
+
+cap drop hours_current
+gen hours_current=.
+replace hours_current=0
+
+foreach i of num 1/3{
+replace inc_all_current=inc_all_current+monthly_cash_job_`i' if b3_`i'==1 & !missing(monthly_cash_job_`i')
+replace inc_all_current=inc_all_current+monthly_inkind_job_`i' if b3_`i'==1 & !missing(monthly_inkind_job_`i')
+replace inc_all_current=inc_all_current+monthly_profit_job_`i' if b3_`i'==1 & !missing(monthly_profit_job_`i')
+
+replace inc_se_current=inc_se_current+monthly_profit_job_`i' if b3_`i'==1
+replace inc_emp_current=inc_emp_current+monthly_cash_job_`i'+monthly_inkind_job_`i' if b3_`i'==1
+replace inc_emp2_current=inc_emp2_current+monthly_cash_job_`i' if b3_`i'==1
+
+replace hours_current=hours_current+monthly_hours_job_`i'  if b3_`i'==1 
+}
+
+cap drop hourly_income_current
+gen hourly_income_current=.
+replace hourly_income_current=inc_all_current/hours_current
+
+label var inc_all_current "Monthly income from current jobs"
+
+label var inc_se_current "Monthly income from current self-employment"
+
+label var inc_emp_current "Monthly income from current employment"
+
+label var inc_emp2_current "Monthly income from current employment excl. inkind"
+
+label var hourly_income_current "Hourly income from current jobs"
+}
+
+{ // calculate average monthly income of the job with most recent starting date
+
+cap drop inc_most_recent 
+
+gen inc_most_recent=.
+replace inc_most_recent=total_monthly_1 if !missing(b4_1) & b4_1<b4_2 & b4_1<b4_3 & b3_1==1
+
+replace inc_most_recent=total_monthly_2 if !missing(b4_2) & b4_2<b4_1 & b4_2<b4_3 & b3_2==1
+
+replace inc_most_recent=total_monthly_3 if !missing(b4_3) & b4_3<b4_2 & b4_3<b4_1 & b3_3==1
+
+label var inc_most_recent "Average monthly income of most recent job"
+}
+
+
+* make missing those which are not asked about employment questions
+
+local incomevars avg_inc_* inc_* hourly_income_last*
+
+foreach var of varlist `incomevars'{
+replace `var'=. if missing(b1) // just to be sure not to include those that are not asked this module, those asked, even if no information provided, might have 0 income
+
+foreach i of num 1/3{
+replace `var'=. if b26_`i'==-97 | b26_`i'==-96 | b17_`i'==-97 | b17_`i'==-96 |b18_`i'==-97 | b18_`i'==-96 // if income information not disclosed by respondent, make it missing
+}
+}
+
+
+}
+}
+
+
+
+
+
 
 *RISE Participation
 cap drop rise_attend
 gen rise_attend = .
 replace rise_attend = 1 if rise_institute== 1 | rise_course ==1
-replace rise_attend = 0 if rise_part ==.
+replace rise_attend = 0 if rise_attend ==.
 label var rise_attend "Attended RISE TSTT trainings"
 cap label define rise_attend_lbl 0 "Did not Attend in RISE TSTT" 1 "Attended RISE TSTT"
 label val rise_attend rise_attend_lbl
