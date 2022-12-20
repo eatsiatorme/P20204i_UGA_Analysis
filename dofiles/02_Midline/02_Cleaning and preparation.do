@@ -974,9 +974,15 @@ label var fles_teacher_qual "RISE FLES trainings provide business skills"
 
 
 
+*Self-perceived employability
+drop spe_score
+egen spe_score=rowmean (e1_spe e2_spe e3_spe e4_spe e5_spe e6_spe e7_spe e8_spe e9_spe e10_spe)
+label var spe_score "Self Perceived Employability Scale Score"
 
+alpha e1 e2 e3 e4 e5 e6 e7 e8 e9 e10, item
+local cronbach=round(`r(alpha)',0.01)
 
-
+/*
  
 
 ********************************************************************************

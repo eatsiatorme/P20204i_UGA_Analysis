@@ -36,14 +36,13 @@ global dofiles "C:\Users\/`c(username)'\Documents\GitHub\PP20204i_UGA_Analysis\d
 
 if "`c(username)'"=="ThomasEekhout" { 
 	global timezone = 1
-global dofiles "C:\Users\/`c(username)'\Documents\GitHub\P20204i_UGA_Analysis\dofiles"
+global dofiles "C:\Users\/`c(username)'\Downloads\GitHub\P20204i_UGA_Analysis\dofiles"
 }
 
 if "`c(username)'"=="ElikplimAtsiatorme" {
 	global timezone = 1
 global dofiles "C:\Users\/`c(username)'\Documents\GitHub\P20204i_UGA_Analysis\dofiles"
 }
-
 
 global ANALYSIS "$P20204i\02_Analysis"
 global version = 1
@@ -75,7 +74,7 @@ global ATTENDANCE_DTA_C2 "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_
 global ATTENDANCE_CLEAN "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\10_Attendance data_cleaned.dta"
 global BASELINE_DATA_COMPLETE "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Baseline_attendance_cleaned.dta"
 global DATA_PREPARED "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Baseline_prepared_for_analysis.dta"
-global ATTENDANCE_RATES "$$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Monitoring"
+global ATTENDANCE_RATES "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\01_Baseline\Monitoring"
 
 
 *MIDLINE DATA
