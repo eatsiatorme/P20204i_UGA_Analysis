@@ -5,7 +5,7 @@
 * Project: P20204i Uganda
 * Topic: Cleaning and preparation of midline data
 
-**Add _ml to each variable referring to the midline survey
+**Add  to each variable referring to the midline survey
 
 *******************************************************************************/
 
@@ -510,7 +510,7 @@ foreach i of num 1/3{
 cap replace isic_1_`i'=6 if (job_category_`i'==1)
 cap replace isic_1_`i'=7 if (job_category_`i'==9) 
 cap replace isic_1_`i'=5 if (job_category_`i'==4)
-*cap replace isic_1_`i'_ml=1 if (job_category_`i'_ml==8)   & (cycle==2 | cycle==3)
+*cap replace isic_1_`i'=1 if (job_category_`i'==8)   & (cycle==2 | cycle==3)
 cap replace isic_1_`i'=3 if (job_category_`i'==5 | job_category_`i'==6 | job_category_`i'==11)
 cap replace isic_1_`i'=4 if (job_category_`i'==7 | job_category_`i'==3) 
 cap replace isic_1_`i'=18 if (job_category_`i'==10) 
@@ -533,7 +533,7 @@ replace isic_simple=888 if !missing(isic_1_1) & !(isic_1_1==3 | isic_1_1==4 | is
 
 label define isic1_lbl 7 "Retail trade", modify
 
-*replace isic_simple=888 if !missing(isic_1_1_ml) & isic_1_1_ml==7 & isic_2_1_ml!=747
+*replace isic_simple=888 if !missing(isic_1_1) & isic_1_1==7 & isic_2_1!=747
 
 replace isic_simple=999 if !missing(b1) & missing(isic_1_1)
 
@@ -572,44 +572,44 @@ List of indicators created/relevant
 
 *INCOME OVER LAST 6 MONTHS
 	**Average monthly income over last 6 months:
-		avg_inc_all_last6_ml
+		avg_inc_all_last6
 
 	**Average monthly income from self-employment over last 6 months:
-		avg_inc_se_last6_ml
+		avg_inc_se_last6
 
 	**Average monthly income from employment over last 6 months:
-		avg_inc_emp_last6_ml
+		avg_inc_emp_last6
 
 	**Average monthly income from employment over last 6 months excluding inkind payments:
-		avg_inc_emp2_last6_ml
+		avg_inc_emp2_last6
 
 *INCOME FROM CURRENT JOB
 	*Monthly income from current jobs
-		inc_all_current_ml
+		inc_all_current
 
 	*Monthly income from current self-employment
-		inc_se_current_ml 
+		inc_se_current 
 
 	*Monthly income from current employment:
-		inc_emp_current_ml
+		inc_emp_current
 
 	*Monthly income from current employment excluding inkind payments:
-		inc_emp2_current_ml
+		inc_emp2_current
 
 *INCOME FROM MOST RECENT JOB
 	**Average monthly income of most recent job:
-		inc_most_recent_ml
+		inc_most_recent
 
 *PRODUCTIVITY: Hourly income
 	* Average hourly income from job 1:
-		hourly_income_1_ml
-		hourly_income_2_ml
-		hourly_income_3_ml
+		hourly_income_1
+		hourly_income_2
+		hourly_income_3
 	*Average hourly income over last 6 months
-		hourly_income_last6_ml
+		hourly_income_last6
 		
 	*Hourly income from current jobs
-		hourly_income_current_ml
+		hourly_income_current
 */
 
 
@@ -711,12 +711,12 @@ gen total_hours_job_`i'=monthly_hours_job_`i'*job_time_in_ref_`i'
 * generate cash income from employment
 cap drop monthly_cash_job_`i'
 gen monthly_cash_job_`i'=.
-//replace monthly_cash_job_`i'=0 //if !missing(b3_`i'_ml)
-replace monthly_cash_job_`i'=b17_`i' //if !missing(b18_`i'_ml)
+//replace monthly_cash_job_`i'=0 //if !missing(b3_`i')
+replace monthly_cash_job_`i'=b17_`i' //if !missing(b18_`i')
 replace monthly_cash_job_`i'=monthly_cash_job_`i'*4.345 if b17_unit_`i'==2 
 replace monthly_cash_job_`i'=monthly_cash_job_`i'*4.345*b16_`i' if b17_unit_`i'==3
 replace monthly_cash_job_`i'=monthly_cash_job_`i'/b17_unit_s_`i' if b17_unit_`i'==4 
-*replace monthly_cash_job_`i'=. if b17_`i'_ml==-97 | b17_`i'_ml==-96// if answer cannot be used for calculation
+*replace monthly_cash_job_`i'=. if b17_`i'==-97 | b17_`i'==-96// if answer cannot be used for calculation
 
 
 * generate inkind income from employment
@@ -724,9 +724,9 @@ destring b18_unit_s_2, replace
 destring b18_unit_s_3, replace
 cap drop monthly_inkind_job_`i'
 gen monthly_inkind_job_`i'=.
-//replace monthly_inkind_job_`i'=0 if !missing(b3_`i'_ml)
-replace monthly_inkind_job_`i'=b18_`i' //if !missing(b18_`i'_ml)
-*replace monthly_inkind_job_`i'=. if b18_`i'_ml==-97 | b18_`i'_ml==-96// if answer cannot be used for calculation
+//replace monthly_inkind_job_`i'=0 if !missing(b3_`i')
+replace monthly_inkind_job_`i'=b18_`i' //if !missing(b18_`i')
+*replace monthly_inkind_job_`i'=. if b18_`i'==-97 | b18_`i'==-96// if answer cannot be used for calculation
 replace monthly_inkind_job_`i'=monthly_inkind_job_`i'*4.345  if b18_unit_`i'==2
 replace monthly_inkind_job_`i'=monthly_inkind_job_`i'*4.345 *b16_`i'  if b18_unit_`i'==3
 replace monthly_inkind_job_`i'=monthly_inkind_job_`i'/b18_unit_s_`i' if b18_unit_`i'==4 
@@ -734,9 +734,9 @@ replace monthly_inkind_job_`i'=monthly_inkind_job_`i'/b18_unit_s_`i' if b18_unit
 *generate monthly profits from self-employment
 cap drop monthly_profit_job_`i'
 gen monthly_profit_job_`i'=.
-//replace monthly_profit_job_`i'=0 if !missing(b3_`i'_ml)
-replace monthly_profit_job_`i'=b26_`i' // if !missing(b26_`i'_ml)
-*replace monthly_profit_job_`i'=. if b26_`i'_ml==-97 | b26_`i'_ml==-96// if answer cannot be used for calculation
+//replace monthly_profit_job_`i'=0 if !missing(b3_`i')
+replace monthly_profit_job_`i'=b26_`i' // if !missing(b26_`i')
+*replace monthly_profit_job_`i'=. if b26_`i'==-97 | b26_`i'==-96// if answer cannot be used for calculation
 replace monthly_profit_job_`i'=monthly_profit_job_`i'*4.345  if b26_unit_`i'==2
 replace monthly_profit_job_`i'=monthly_profit_job_`i'*4.345 *b16_`i' if b26_unit_`i'==3
 replace monthly_profit_job_`i'=monthly_profit_job_`i'/b26_unit_s_`i' if b26_unit_`i'==4 
@@ -761,7 +761,7 @@ cap drop hourly_income_`i'
 gen hourly_income_`i'=.
 replace hourly_income_`i'=total_monthly_`i'/monthly_hours_job_`i'
 label var hourly_income_`i' "Average hourly income from `i'. job"
-replace hourly_income_`i'=. if b17_`i'==-97 | b17_`i'==-96 |b18_`i'==-97 | b18_`i'==-96 //| b26_`i'_ml==-97 | b26_`i'_ml==-96 | // if answer cannot be used for calculation
+replace hourly_income_`i'=. if b17_`i'==-97 | b17_`i'==-96 |b18_`i'==-97 | b18_`i'==-96 //| b26_`i'==-97 | b26_`i'==-96 | // if answer cannot be used for calculation
 
 }
 
@@ -819,7 +819,7 @@ egen total_hours_last`r'mo=rowtotal(total_hours_job_?)
 replace total_hours_last`r'mo=. if missing(b1)
 foreach i in 1 2 3{
 replace total_hours_last`r'mo=. if missing(monthly_hours_job_`i') & !missing(total_monthly_`i')
-*replace total_income_last`r'mo=. if b26_`i'_ml==-97 | b26_`i'_ml==-96 | b17_`i'_ml==-97 | b17_`i'_ml==-96 |b18_`i'_ml==-97 | b18_`i'_ml==-96 // if income information not disclosed by respondent 
+*replace total_income_last`r'mo=. if b26_`i'==-97 | b26_`i'==-96 | b17_`i'==-97 | b17_`i'==-96 |b18_`i'==-97 | b18_`i'==-96 // if income information not disclosed by respondent 
 }
 
 
@@ -974,6 +974,10 @@ label var fles_teacher_qual "RISE FLES trainings provide business skills"
 
 
 
+********************************************************************************
+*             	                 EMPLOYABILITY				   			      *			
+********************************************************************************
+
 *Self-perceived employability
 drop spe_score
 egen spe_score=rowmean (e1_spe e2_spe e3_spe e4_spe e5_spe e6_spe e7_spe e8_spe e9_spe e10_spe)
@@ -982,8 +986,237 @@ label var spe_score "Self Perceived Employability Scale Score"
 alpha e1 e2 e3 e4 e5 e6 e7 e8 e9 e10, item
 local cronbach=round(`r(alpha)',0.01)
 
+
+*Received a job offer
+label var job_offer "Received a job offer in the past 6 months"
+
+
+*Received a job offer in the relevant trade 
+
+tempfile midline_temp
+save `midline_temp'
+
 /*
+Need to:
+1. use baseline dataset (but with what ID?)
+2. drop all variables except for ID and trade assigned to
+3. merge with `midline_temp'
+4. recode to align codes of categories of trades 
+*/
+
+
+********************************************************************************
+*             	                 FINANCIAL SKILLS INDEX		   			      *			
+********************************************************************************
+
+/*
+Each individual got a score of 1 for every correct answer and 0 for every incorrect answer they provided to these questions. Then, the financial literacy levels were calculated as the sum of correct answers to the 5 financial literacy questions, as recommended by the OECD in Atkinson and Messy (2012).iv Therefore, financial literacy scores range from 0 to 5.
+
+see: C:\Users\...\C4ED\P20204i_EUTF_UGA - Documents\03_Questionnaires\Development\REF Financial literacy in developing countries (p.139)
+*/
+
+*Division
+gen division=r1_correct
+replace division=0 if r1_correct==. & !missing(r1)
+label var division "Division"
+label define r_lbl 0"Incorrect answer" 1"Correct answer"
+label values division r_lbl
+
+*Time value of money
+gen value_money=r2_correct
+replace value_money=0 if r2_correct==. & !missing(r2)
+label var value_money "Time value of money"
+label values value_money r_lbl
+
+*Interest on a loan
+gen interest_loan=r3_correct
+replace interest_loan=0 if r3_correct==. & !missing(r3)
+label var interest_loan "Interest on a loan"
+label values interest_loan r_lbl
+
+*Simple interest
+gen interest_simple=r4_correct
+replace interest_simple=0 if r4_correct==. & !missing(r4)
+label var interest_simple "Simple interest"
+label values interest_simple r_lbl
+
+*Compound interest
+gen interest_compound=r5_correct
+replace interest_compound=0 if r5_correct==. & !missing(r5)
+label var interest_compound "compound interest"
+label values interest_compound r_lbl
+
+egen fin_score=rowtotal (division value_money interest_loan interest_simple interest_compound)
+label var spe_score "Financial index (0-5)"
+
+
+********************************************************************************
+*						PROFESSIONAL PRACTICES									*
+********************************************************************************
+{ // PROFESSIONAL PRACTICES
+/* notes
+
+vars generated
+
+	bus_prac_plan
+	bus_prac_all
+	bus_prac_sem
+	bus_prac_intern
+	bus_prac_extern
+	
+	
+*background
+professional practices score based on module H
+probably derived from de mel et al 2014 Business Training and Female Enterprise Start-up, Growth, and Dynamics
+https://openknowledge.worldbank.org/bitstream/handle/10986/11998/WPS6145.pdf?sequence=1&isAllowed=y
+simple additive score
+note Financial planning questions were asked to the whole sample (Regular employee and Self employed) while professional practice questions were asked only to self-employed, thus the different sample size. Financial planninig ->299 observ. Professional practices -> 99 observ.
+*/
+
+{ // generate scores
+
+***Financial Planning (complete sample)
+
+clonevar fin_record=h2
+replace fin_record=1 if fin_record==2
+label var fin_record "Keeps written financial records (simple or detailed notes)" 
+label values fin_record bin_lbl
+
+clonevar goal_year=h4
+label var goal_year "Has a concrete goal for next year"
+
+clonevar anticip_invest=h5
+label var anticip_invest "Anticipates investments of the coming year"
+
+clonevar check_target=h6
+label var check_target "Check whether targets have been achieved (frequency: 0-3)"
+
+clonevar h6bis= h6
+replace h6bis=1 if h6==1 | h6==2 | h6==3
+
  
+gen fin_plan = fin_record + h4 + h5 + h6bis
+label var fin_plan "Basic financial planning (0-4)"
+
+
+****Self employed professional practices (only self-employed)
+clonevar pers_pro=h1
+label var pers_pro "Seperates professional and personal cash"
+
+clonevar visit_comp=h7
+label var visit_comp "Visited competitor's business in the past 6 month'"
+
+clonevar supply_comp=h8
+label var supply_comp "Adapted supply according to competitors in the past 6 month"
+
+clonevar disc_client=h9
+label var disc_client "Discussed with a client how to answer needs in the past 6 month"
+
+clonevar disc_suppl=h10
+label var disc_suppl "Asked supplier about products selling well in the past 6 month"
+
+clonevar advert=h11
+label var advert "Has advertised his business/goods/services in the past 6 month"
+
+clonevar goods_profit=h12
+label var goods_profit "Know which goods/services make the most profit"
+
+clonevar records_an=h13
+label var records_an "Uses records to analyse performances of products (0-4)"
+
+clonevar h13bis= h13
+replace h13bis=1 if h13==1 | h13==2 | h13==3
+
+*Composite score of Self employed professional practices
+gen bus_prac = h1 + h7 + h8 + h9 + h10 + h11 + h12 + h13bis
+label var bus_prac "Business practices [Self employed] (0-8)"
+
+// Alternative suggestion (Thomas)
+
+*Internal management (only for entrepreneurs)
+gen bus_prac_intern= h1+h2+h4+h5+h6+h12+h13
+label var bus_prac_intern "Internal management practices score [Self employed] (0-12)"
+//replace intern_manag_self= . if self_employed==0
+
+*External management (only for entrepreneurs)
+gen bus_prac_extern= h7+h8+h9+h10+h11+h12
+label var bus_prac_intern "External management practices score [Self employed] (0-5)"
+//replace intern_manag_self= . if self_employed==0
+}
+
+
+}
+
+
+
+
+********************************************************************************
+*					ENTREPRENEURIAL SELF-EFFICACY   							*
+********************************************************************************
+/*
+
+https://journals.sagepub.com/doi/10.1111/j.1540-6520.2007.00179.x
+Individuals rate themselves against their peers on the different components using a likert scale. The scores on the different components is aggregated and the overall mean used as a composite score of entrepreneurial self efficacy
+
+Entrepreneurial self-efficacy was measured by a 6-item
+self-assessment scale. The items on this scale represent competencies related to business/
+entrepreneurial success, and were developed based on expert interviews with business
+leaders (Marlino & Wilson, 2003). In each sample, the respondents were asked to compare
+themselves in these skill areas to relevant peers. The respondents in all samples
+rated their self-efficacy level on a 5-point Likert scale (1 = a lot worse; 5 = much better).
+
+*/
+
+*w1. I can identify problems and develop business ideas and entrepreneurial projects to solve these problems
+label var w1 "Being able to solve problems"
+
+*w2. I can make sound business decisions to ensure the success of my business
+label var w2 "Making decisions"
+
+*w3. I can plan and control my business finances very well.
+label var w3 "Managing money"
+
+*w4. I can use my skills and resources to find novel and new ways to start a business or enterprise
+label var w4 "Being creative"
+
+*w5. I can convince people to buy into my business ideas and products
+label var w5 "Getting people to agree with you  "
+
+*w6. I am convinced that I can lead a business including managing people I empoy and traininng them
+label var w6 "Being a leader "
+
+egen entrep_self=rowmean (w1 w2 w3 w4 w5 w6)
+label var entrep_self "Entrepreneurial self-efficacy"
+ 
+
+alpha w1 w2 w3 w4 w5 w6, item
+local cronbach=round(`r(alpha)',0.01)
+
+
+********************************************************************************
+*							  SOCIAL CONNECTEDNESS  							*
+********************************************************************************
+
+*Categorise groups in "other" category
+
+rename v1a group_pro
+rename v1b group_saving
+rename v1c group_leisure
+rename v1d group_ngo
+rename v1e group_community
+
+
+replace group_leisure=1 if v1g_1=="CHURCH CHOIR" | v1g_1=="CHIOR GROUP" | v1g_1=="CHOIR" | v1g_1=="CHOIR GROUP" | v1g_1=="CHOIR LEADER" | v1g_1=="CHOIR MEMBER IN THE CHURCH" | v1g_1=="CHURCH  CHOIR" | v1g_1=="CHURCH CHOIR" | v1g_1=="CHURCH CHOIR  GROUP" | v1g_1=="CHURCH CHOIR GROUP"
+
+*Religious group
+
+
+
+
+/*
+
+
+
 
 ********************************************************************************
 save "$MIDLINE_PREPARED", replace
