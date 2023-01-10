@@ -82,6 +82,13 @@ global MIDLINE_RAW "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\0
 global MIDLINE_merged "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\MIDLINE_merged.dta"
 global MIDLINE_PREPARED "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\02_Data\02_midline_prepared.dta"
 
+
+*REGRESSIONS
+global reg_data "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\03_regression_data.dta"
+global export "$ONEDRIVE\P20204i_EUTF_UGA - Documents\02_Analysis\03_Tables_Graphs\03_Regressions"
+
+
+
 //Load maketable command programme 
 cd "$dofiles"
 do "99_maketable_PROGRAM.do"
@@ -123,6 +130,9 @@ do "1.1_Power calculations_WIP.do"
 cd "$dofiles"
 do "1.2_Balance_checks_WIP.do"
 cd "$dofiles"
-/*
+
 do "1.3_Attendance rates.do"
 */
+
+do "3.1.0_Regressions setup.do"
+
