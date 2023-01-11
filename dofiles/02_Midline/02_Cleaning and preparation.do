@@ -982,11 +982,11 @@ label var spe_score "Self Perceived Employability Scale Score"
 alpha e1 e2 e3 e4 e5 e6 e7 e8 e9 e10, item
 local cronbach=round(`r(alpha)',0.01)
 
-/*
+
  
 
 ********************************************************************************
-save "$MIDLINE_PREPARED", replace
+
 
 
 *Add  suffix to all variables (Except for applicant id and treatment variables)
