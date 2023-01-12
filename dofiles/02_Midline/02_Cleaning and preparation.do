@@ -923,18 +923,19 @@ replace `var'=. if b26_`i'==-97 | b26_`i'==-96 | b17_`i'==-97 | b17_`i'==-96 |b1
 
 
 
-
-
+* TRAININGS
+*******************************************************************************
 *RISE Participation
+*******************************************************************************
 cap drop rise_attend
 gen rise_attend = .
 replace rise_attend = 1 if rise_institute== 1 | rise_course ==1
 replace rise_attend = 0 if rise_attend ==.
 label var rise_attend "Attended RISE TSTT trainings"
-cap label define rise_attend_lbl 0 "Did not Attend in RISE TSTT" 1 "Attended RISE TSTT"
+cap label define rise_attend_lbl 0 "Did not Attend RISE TSTT" 1 "Attended RISE TSTT"
 label val rise_attend rise_attend_lbl
 
-cap drop fles_attend //Refers only to trainees who completed the tstt trainings and took part in the fles training.
+cap drop fles_attend //Refers only to trainees who completed the tstt trainings and took part in the fles training. This is solely based on data collected at midline. This could differ based on monitoring data.
 gen fles_attend =. 
 replace fles_attend = 1 if rise_check_fles == 1
 replace fles_attend =0 if rise_check_fles == 0
@@ -972,15 +973,90 @@ egen fles_teacher_qual = rowmean(k16 k17)
 replace fles_teacher_qual =. if missing(k17) | missing(k16)
 label var fles_teacher_qual "RISE FLES trainings provide business skills"
 
+*ABSENTEEISM (TSTT)
 
 
-*Self-perceived employability
+
+*ABSENTEEISM (FLES)
+
+
+
+
+
+*******************************************************************************
+*Other Trainings
+*******************************************************************************
+
+
+
+********************************************************************************					BRIEF RESILIENCE SCALE							  		
+*******************************************************************************
+
+
+********************************************************************************					PROFESSIONAL PRACTICES									
+*******************************************************************************
+
+
+
+
+********************************************************************************					FINANCIAL LITERACY								
+*******************************************************************************
+
+
+
+********************************************************************************
+*						JOB MATCHES
+******************************************************************************
+
+
+
+
+*
+*******************************************************************************
+*					SOCIAL CONNECTEDNESS
+*******************************************************************************
+
+
+
+
+* 
+******************************************************************************
+*						RESILIENCE		
+******************************************************************************
+
+
+
+
+*
+*******************************************************************************
+*				BACKGROUND & HISTORY OF PARENTS
+******************************************************************************
+
+
+
+
+*
+******************************************************************************
+* 							TRACKING
+*****************************************************************************
+
+
+
+
+
+******************************************************************************
+* 							SELF-PERCEIVED EMPLOYABILITY
+*****************************************************************************
 drop spe_score
 egen spe_score=rowmean (e1_spe e2_spe e3_spe e4_spe e5_spe e6_spe e7_spe e8_spe e9_spe e10_spe)
 label var spe_score "Self Perceived Employability Scale Score"
 
 alpha e1 e2 e3 e4 e5 e6 e7 e8 e9 e10, item
 local cronbach=round(`r(alpha)',0.01)
+
+
+********************************************************************************					JOB SEARCH BEHAVIOR
+*******************************************************************************
 
 
  
